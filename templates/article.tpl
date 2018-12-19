@@ -3,7 +3,7 @@
     <div class="row">
         <div class="col-lg-12 text-center">
             <h1 class="mt-5">{$actionTexte} un article</h1>
-            <!--<?php include "includes/notification.inc.php"; ?>-->
+            {include file='notifications.tpl'}
         </div>
     </div>
 

@@ -156,6 +156,7 @@
 
     include_once "includes/head.inc.php";
     include_once "includes/menu.inc.php";
+    include_once "includes/notification.inc.php";    
 
     $smarty->display("article.tpl");
 

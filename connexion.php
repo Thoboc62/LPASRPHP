@@ -68,7 +68,7 @@
 
             //créer un cookie dans le navigateur
             //setcookie(nomCookie, valeurCookie, tempsConservation);
-            setcookie("sid", $sid, time()+15);
+            setcookie("sid", $sid, time()+60);
 
             $notification = "Vous êtes maintenant connecté.";
             $succes_notification = true;

@@ -6,9 +6,12 @@
         include_once "includes/connexion.inc.php";
         include_once "includes/head.inc.php";
         include_once "includes/fonctions.inc.php";
-        require_once "libs/Smarty.class.php";
         
         $nom_page = "index";
+        
+        //Mise en place de Smarty
+        
+        require_once "libs/Smarty.class.php";
         $smarty = new Smarty();
 
         $smarty->setTemplateDir("templates/");
@@ -16,14 +19,17 @@
        
         $smarty->debugging = true;
              
-        //print_r2($_SESSION);
-
+        //Insertion de la barre supérieure (menus)
         include_once "includes/menu.inc.php";
+        
+        //Affichage de la notification, si besoin
+        include_once 'includes/notification.inc.php';
 
         //Affichage des articles par page (pagination)
-        $page_courante = empty($_GET['p']) ? 1 : $_GET['p'];
+        
+        $page_courante = empty($_GET['p']) ? 1 : $_GET['p']; //obtention numéro de page courante
 
-        $index = getIndex($page_courante, _NB_ART_PAR_PAGE);
+        $index = getIndex($page_courante, _NB_ART_PAR_PAGE); //détermination de l'index
 
         $nb_articles = nbTotalArticlesPublie($bdd);
         $nb_pages = ceil($nb_articles / _NB_ART_PAR_PAGE); //ceil() arrondit au nombre entier supérieur
@@ -48,6 +54,8 @@
         //Association des enregistrements
         $tab_articles = $sth->fetchAll(PDO::FETCH_ASSOC); //fetAll récupère toutes les entrées de la BDD d'un coup
         //print_r2($tab_articles);
+        
+        //Envoi des variables nécessaires pour afichage dans template
         
         $smarty->assign('nom_page', $nom_page);
         $smarty->assign('tab_articles', $tab_articles);
