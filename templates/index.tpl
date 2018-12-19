@@ -8,18 +8,9 @@
             <div class="row">
                 <div class="col-lg-12 text-center">
                     <h1 class="mt-5">Blizzard's fan page</h1>
-                    {if isset($smarty.session.notifications)}
-                        <div class="alert alert-{$color_notification} alert-dismissible fade show" role="alert">
-                            {$smarty.session.notifications.message}
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                    {/if}
+                    {include file='notifications.tpl'}
                 </div>
             </div>
-                
-            
 
             <div class="row">
                 {foreach from=$tab_articles item=i}
