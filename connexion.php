@@ -8,6 +8,7 @@
     include_once "includes/head.inc.php";
     include_once "includes/fonctions.inc.php";
 
+    //Variable nécessaire pour la mise en surbrillance du terme dans la barre de menus
     $nom_page = "connexion";
     
     //Mise en place de Smarty
@@ -26,16 +27,16 @@
     //Affichage de la notification, si besoin
     include_once 'includes/notification.inc.php';
 
-    if($is_connect == TRUE) { //si l'utilisateur est déjà connecté, on le redirige
+    if($is_connect == TRUE) { //si l'utilisateur est déjà connecté, on le redirige, car il n'a pas besoin d'accéder à la page de connexion
+        //on créé une notification pour avertir le visiteur
         $_SESSION['notifications']['message'] = "Vous êtes déjà connecté.";
         $_SESSION['notifications']['result'] = true;
+        //on le redirige sur la page d'accueil
         header("Location: index.php");
         exit();
     }
 
     if(isset($_POST['submit'])) { //si un utilisateur demande la connexion avec le formulaire
-        //print_r2($_POST);
-        //print_r2($_FILES);
 
         //On vérifie si les identifiants correspondent à un utilisateur enregistré
         $select_utilisateur_count = "SELECT count(*) as total FROM users WHERE (email=:email AND mdp=:mdp)";
@@ -51,56 +52,49 @@
         //Exécution de la requête
         $result = $sth->execute(); //on stocke dans $result le resultat de la requete, pour savoir si elle a fonctionné
 
+        //on compte le nombre de comptes avec les identifiants (identifiant + MDP corrects) renseignés
         $nb_result = $sth->fetch(PDO::FETCH_ASSOC);
 
-        echo "Nombre résultats: ".$nb_result['total']."<br/>";
-
         if($nb_result['total'] > 0) { //si un utilisateur est trouvé avec les identifiants renseignés, on le connecte
+            //on créé un SID (identifiant de session unique généré à partir de l'email et de la date depuis le 1er janvier 1970)
             $sid = sid($_POST['email']);
-            //echo $sid."<br/>";
+            
+            //on met à jour l'utilisateur en ajoutant le SID
             $sql_update = "UPDATE users SET sid=:sid WHERE email=:email";
             $sth_update = $bdd->prepare($sql_update);
             $sth_update->bindValue(":email", $_POST['email'], PDO::PARAM_STR);
             $sth_update->bindValue(":sid", $sid, PDO::PARAM_STR);
 
             $result_update = $sth_update->execute();
-            //var_dump($result_update);
 
-            //créer un cookie dans le navigateur
+            //on créé un cookie dans le navigateur pour maintenir la connexion, même après fermeture du navigateur (pendant un temps donné)
             //setcookie(nomCookie, valeurCookie, tempsConservation);
-            setcookie("sid", $sid, time()+60);
+            setcookie("sid", $sid, time()+600); //durée de la session: 10minutes
 
+            //création d'une notification informant que la connexion a été effectuée
             $notification = "Vous êtes maintenant connecté.";
             $succes_notification = true;
         }
         else {
+            //création d'une notification informant que la connexion a échouée
             $notification = "Erreur d'authentification.";
             $succes_notification = false;
         }
 
-        //Variables de session
+        //enregistrement de la notification dans les variables de session
         $_SESSION['notifications']['message'] = $notification;
         $_SESSION['notifications']['result'] = $succes_notification;
 
-        echo $notification;
-
-        //exit();
-
+        //si la connexion est effectuée, on redirige vers l'accueil, sinon on redirige vers la page de connexion
         $succes_notification == TRUE ? header("Location: index.php") : header("Location: connexion.php");
 
-        //Redirection vers la page d'Accueil
-        //header('Location: index.php');
         exit(); //arrêter l'exécution à cet endroit, le reste de la page ne sera pas traité
 
     }
-
-    if(isset($_SESSION['notifications'])) {
-        $color_notification = $_SESSION['notifications']['result'] == true ? "success" : "danger";
-    }
     
+    //Affichage du formulaire de connexion en cas d'echec de connexion ou si le formulaire n'a pas été rempli
     $smarty->display("connexion.tpl");
 
-
-?>
-
-<?php include 'includes/footer.inc.php' ?>
+    include 'includes/footer.inc.php';
+    
+ ?>
