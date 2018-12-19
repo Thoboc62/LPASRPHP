@@ -9,21 +9,35 @@
     include_once "includes/fonctions.inc.php";
 
     $nom_page = "connexion";
+    
+    //Mise en place de Smarty
+        
+    require_once "libs/Smarty.class.php";
+    $smarty = new Smarty();
 
+    $smarty->setTemplateDir("templates/");
+    $smarty->setCompileDir("templates_c/");
+
+    $smarty->debugging = true;
+
+    //Insertion barre de menus
     include "includes/menu.inc.php";
+    
+    //Affichage de la notification, si besoin
+    include_once 'includes/notification.inc.php';
 
-    if($is_connect == TRUE) {
+    if($is_connect == TRUE) { //si l'utilisateur est déjà connecté, on le redirige
         $_SESSION['notifications']['message'] = "Vous êtes déjà connecté.";
         $_SESSION['notifications']['result'] = true;
         header("Location: index.php");
         exit();
     }
 
-    if(isset($_POST['submit'])) {
-        print_r2($_POST);
-        print_r2($_FILES);
+    if(isset($_POST['submit'])) { //si un utilisateur demande la connexion avec le formulaire
+        //print_r2($_POST);
+        //print_r2($_FILES);
 
-        //Requête d'insertion de l'utilisateur
+        //On vérifie si les identifiants correspondent à un utilisateur enregistré
         $select_utilisateur_count = "SELECT count(*) as total FROM users WHERE (email=:email AND mdp=:mdp)";
         /* @var $bdd PDO */
 
@@ -41,7 +55,7 @@
 
         echo "Nombre résultats: ".$nb_result['total']."<br/>";
 
-        if($nb_result['total'] > 0) {
+        if($nb_result['total'] > 0) { //si un utilisateur est trouvé avec les identifiants renseignés, on le connecte
             $sid = sid($_POST['email']);
             //echo $sid."<br/>";
             $sql_update = "UPDATE users SET sid=:sid WHERE email=:email";
@@ -54,7 +68,7 @@
 
             //créer un cookie dans le navigateur
             //setcookie(nomCookie, valeurCookie, tempsConservation);
-            setcookie("sid", $sid, time()+600);
+            setcookie("sid", $sid, time()+15);
 
             $notification = "Vous êtes maintenant connecté.";
             $succes_notification = true;
@@ -83,34 +97,10 @@
     if(isset($_SESSION['notifications'])) {
         $color_notification = $_SESSION['notifications']['result'] == true ? "success" : "danger";
     }
+    
+    $smarty->display("connexion.tpl");
 
 
 ?>
-
-<!-- Page Content -->
-<div class="container">
-    <div class="row">
-        <div class="col-lg-12 text-center">
-            <h1 class="mt-5">Se connecter</h1>
-            <?php include "includes/notification.inc.php"; ?>
-        </div>
-    </div>
-
-    <div class="row">
-        <div class="col-lg-12 text-center">
-            <form action="connexion.php" method="post" enctype="multipart/form-data" id="form_article">
-                <div class="form-group">
-                    <label for"login" class="col-from-label">Email:</label>
-                    <input type="email" class="form-control" id="email" name="email" placeholder="Votre adresse email" value="" required/>
-                </div>
-                <div class="form-group">
-                    <label for"mdp" class="col-from-label">Mot de passe:</label>
-                    <input type="password" class="form-control" id="mdp" name="mdp" placeholder="Votre mot de passe" value="" required/>
-                </div>
-                <button type="submit" class="btn btn-primary" name="submit" value="connecter">Se connecter</button>
-            </form>
-        </div>
-    </div>
-</div>
 
 <?php include 'includes/footer.inc.php' ?>
