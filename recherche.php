@@ -9,6 +9,7 @@
     include_once "includes/head.inc.php";
     include_once "includes/fonctions.inc.php";
 
+    //Variable nécessaire pour la mise en surbrillance du terme dans la barre de menus
     $nom_page = "recherche";
     
     //Mise en place de Smarty
@@ -21,21 +22,21 @@
 
     $smarty->debugging = true;
 
+    //insertion barre supérieure (menus)
     include "includes/menu.inc.php";
     
+    //si la recherche d'un motif est demandée
     if(isset($_GET['afficher']) && $_GET['afficher'] == 1 && isset($_GET['recherche'])) {
-        //print_r2($_GET);
-        //print_r2($_FILES);
 
         //Affichage des articles par page (pagination)
         $page_courante = empty($_GET['p']) ? 1 : $_GET['p'];
 
         $index = getIndex($page_courante, _NB_ART_PAR_PAGE);
 
-        $nb_articles = nbResultatsRecherche($bdd, $_GET['recherche']);
-        $nb_pages = ceil($nb_articles / _NB_ART_PAR_PAGE); //ceil() arrondit au nombre entier supérieur
+        $nb_articles = nbResultatsRecherche($bdd, $_GET['recherche']); //nombre d'articles correspondant à la recherche
+        $nb_pages = ceil($nb_articles / _NB_ART_PAR_PAGE); //ceil() arrondit au nombre entier supérieur, détermine le nombre de pasges nécessaires
 
-        
+        //requete de selection des articles avec le motif donné par le visiteur
         $recherche = "SELECT * FROM articles WHERE titre LIKE :titre OR texte LIKE :texte LIMIT :index, :nb_article_par_page";
         /* @var $bdd PDO */
 
@@ -54,31 +55,25 @@
 
         $tab_result = $sth->fetchAll(PDO::FETCH_ASSOC);
 
-        //print_r2($tab_result);
-        // exit();
-
-        $nb_result = nbResultatsRecherche($bdd, "%".$_GET['recherche']."%");
+        $nb_result = nbResultatsRecherche($bdd, "%".$_GET['recherche']."%"); //nombre de resultats pour la recherche
         
         $afficher_resultats = 1;
         
+        //envoi des variables à Smarty
         $smarty->assign('tab_result', $tab_result);
         $smarty->assign('nb_pages', $nb_pages);
         $smarty->assign('recherche', $_GET['recherche']);
 
-        //Redirection vers la page d'Accueil
-        //print_r2($_SESSION);
-        // exit();
-        //header('Location: index.php');
-        //exit(); //arrêter l'exécution à cet endroit, le reste de la page ne sera pas traité
-
     }
-    else {
+    else { //si on ne demande pas l'affichage (formulaire non rempli une premiere fois), on demandera a Smarty de ne pas réaliser le traitement de l'affichage des résultats
         $afficher_resultats = 0;
     }
     
+    //envoi des variables à Smarty
     $smarty->assign('nom_page', $nom_page);
     $smarty->assign('afficher_resultats', $afficher_resultats);
 
+    //affichage de la page
     $smarty->display("recherche.tpl");
 
     include 'includes/footer.inc.php';
