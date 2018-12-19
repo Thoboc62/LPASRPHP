@@ -42,7 +42,7 @@
 
 
         //Requête de sélection des articles
-        $select_article = "SELECT id_articles, titre, texte, DATE_FORMAT(date, '%d/%m/%Y') as date, publie FROM articles WHERE publie=:publie "
+        $select_article = "SELECT id_articles, titre, texte, DATE_FORMAT(date, '%d/%m/%Y') as date, publie FROM articles WHERE publie=:publie ORDER BY date DESC "
                 . "LIMIT :index, :nb_article_par_page";
         /* @var $bdd PDO */
 
