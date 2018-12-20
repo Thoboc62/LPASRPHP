@@ -60,7 +60,8 @@
             $sth->bindValue(":id", $_POST['id'], PDO::PARAM_INT);
             $sth->bindValue(":publie", $publie, PDO::PARAM_INT);
         }
-
+        
+       
         //Exécution de la requête
         $result = $sth->execute(); //on stocke dans $result le resultat de la requete, pour savoir si elle a fonctionnée
 
@@ -113,7 +114,7 @@
 
     $action = $_GET['action']; //récupérer l'action demandée par l'utilisateur (ajout/modification) depuis l'URL, servira pour affichage de l'action à effectuer dans le bouton du formulaire
 
-    //afficher les données de l'article selectionné dans le formulaire pour modification
+    //afficher les données de l'article selectionné sur la page d'accueil pour modification, ou suppression
     if($action == "modifier") {
         
         //requete de selection de l'article
@@ -130,6 +131,34 @@
         $result_select_article_a_modifier = $sth->execute(); //on stocke dans $result le resultat de la requete, pour savoir si elle a fonctionné
         $tab_article = $sth->fetch(PDO::FETCH_ASSOC);
 
+    }
+    elseif($action=="supprimer"){
+        
+        //requete suppression de l'article
+        $requete_suppr_article = "DELETE FROM articles WHERE id_articles = :id";
+        /* @var $bdd PDO */
+        
+        //Préparation de la requête
+        $sth = $bdd->prepare($requete_suppr_article);
+
+        //Sécuriser les paramètres
+        $sth->bindValue(":id", $_GET['id'], PDO::PARAM_INT);
+
+        //Exécution de la requête
+        $sth->execute(); //on stocke dans $result le resultat de la requete, pour savoir si elle a fonctionné
+        
+        //création d'une notification pour informer de la suppression de l'article
+        $notification = "L'article a bien été supprimé.";
+        $succes_notification = true;
+        
+        //enregistrement de la notification dans les variables de session
+        $_SESSION['notifications']['message'] = $notification;
+        $_SESSION['notifications']['result'] = $succes_notification;
+        
+        //redirection vers la page d'accueil
+        header('Location: index.php');
+        exit();
+        
     }
     else { //on créé un tableau vide si on ne doit pas mettre à jour un article, pour éviter notamment des erreurs
         $tab_article = array(
