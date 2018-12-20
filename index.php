@@ -66,6 +66,27 @@
         $smarty->assign('tab_articles', $tab_articles);
         $smarty->assign('nb_pages', $nb_pages);
         
+        //requête de sélection et de mise en correspondance des articles avec leurs commentaires respectifs
+        $select_commentaires = "SELECT c.pseudo, c.commentaire, DATE_FORMAT(c.date, '%d/%m/%Y') as date, c.id_articles FROM commentaires AS c "
+                . "INNER JOIN articles AS a ON c.id_articles = a.id_articles WHERE publie=:publie ORDER BY c.date DESC";
+        
+        /* @var $bdd PDO */
+        
+        //preparation de la requête
+        $sth2=$bdd->prepare($select_commentaires);
+        
+        //securisation des paramètres
+        $sth2->bindValue(":publie", 1, PDO::PARAM_BOOL);
+        
+        //exécution de la requête
+        $sth2->execute();
+        
+        //Association des enregistrements
+        $tab_commentaires = $sth2->fetchAll(PDO::FETCH_ASSOC);
+        
+        //Envoi des variables nécessaires pour affichage dans template avec Smarty
+        $smarty->assign('tab_commentaires', $tab_commentaires);
+        
         //Affichage de la page
         $smarty->display("index.tpl");
 
