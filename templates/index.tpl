@@ -22,6 +22,7 @@
                             <p class="card-text">{$i.texte}</p>
                             <a href="#" class="btn btn-primary">Créé le: {$i.date}</a>
                             <a href="article.php?action=modifier&id={$i.id_articles}" class="btn btn-warning">Modifier</a>
+                            <a href="article.php?action=supprimer&id={$i.id_articles}" class="btn btn-danger">Supprimer</a>
                         </div>
                     </div>
                 </div>
