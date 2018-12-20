@@ -24,6 +24,25 @@
                             <a href="article.php?action=modifier&id={$i.id_articles}" class="btn btn-warning">Modifier</a>
                             <a href="article.php?action=supprimer&id={$i.id_articles}" class="btn btn-danger">Supprimer</a>
                         </div>
+                        <div class="card-body text-center">
+                            <h4 class="card-title">COMMENTAIRE</h4>
+                            <form action="commentaire.php" method="post" enctype="multipart/form-data" id="form_article">
+                                <input type="hidden" value="{$i.id_articles}" name="id"/>
+                                <div class="form-group">
+                                    <label for"pseudo" class="col-from-label">Pseudo:</label>
+                                    <input type="text" class="form-control" id="pseudo" name="pseudo" placeholder="Votre pseudo" value="" required/>
+                                </div>
+                                <div class="form-group">
+                                    <label for"email" class="col-from-label">Email:</label>
+                                    <input type="email" class="form-control" id="email" name="email" placeholder="Votre adresse email" value="" required/>
+                                </div>
+                                <div class="form-group">
+                                    <label for"email">Votre commentaire:</label>
+                                    <textarea class="form-control" id="texte" name="texte" rows="3" required></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary" name="submit" value="">Envoyer votre commentaire</button>
+                            </form>
+                        </div>
                     </div>
                 </div>
                 {/foreach}
