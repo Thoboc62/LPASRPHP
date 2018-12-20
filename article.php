@@ -12,7 +12,7 @@
 
     //si le visiteur n'est pas connecté, on le redirige vers la page de connexion, et on l'informe
     if(!$is_connect) {
-        $_SESSION['notifications']['message'] = "Vous devez vous connecter pour ajouter ou modifier des articles.";
+        $_SESSION['notifications']['message'] = "Vous devez vous connecter pour ajouter, modifier ou supprimer des articles.";
         $_SESSION['notifications']['result'] = false;
         header("Location: connexion.php");
         exit();
