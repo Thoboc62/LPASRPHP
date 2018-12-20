@@ -136,16 +136,20 @@
         
         //requete suppression de l'article
         $requete_suppr_article = "DELETE FROM articles WHERE id_articles = :id";
+        $requete_suppr_commentaires = "DELETE FROM commentaires WHERE id_articles = :id";
         /* @var $bdd PDO */
         
         //Préparation de la requête
         $sth = $bdd->prepare($requete_suppr_article);
+        $sth2 = $bdd->prepare($requete_suppr_commentaires);
 
         //Sécuriser les paramètres
         $sth->bindValue(":id", $_GET['id'], PDO::PARAM_INT);
+        $sth2->bindValue(":id", $_GET['id'], PDO::PARAM_INT);
 
         //Exécution de la requête
-        $sth->execute(); //on stocke dans $result le resultat de la requete, pour savoir si elle a fonctionné
+        $sth->execute();
+        $sth2->execute();
         
         //création d'une notification pour informer de la suppression de l'article
         $notification = "L'article a bien été supprimé.";
