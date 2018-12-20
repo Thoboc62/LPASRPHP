@@ -25,10 +25,6 @@
                 </li>
         <?php } ?>
 
-        <li class="nav-item <?php if($nom_page == "contact") { echo 'active';}?>">
-          <a class="nav-link" href="#">Contact</a>
-        </li>
-
         <?php
             if($is_connect) { ?>
                 <li class="nav-item">
